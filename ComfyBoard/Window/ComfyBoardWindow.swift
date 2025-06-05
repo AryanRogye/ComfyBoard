@@ -25,7 +25,8 @@ final class ComfyBoardWindow: NSObject {
     func start() {
         createWindow()
         
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { _ in
+        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+            guard let self = self else { return }
             DispatchQueue.global(qos: .userInitiated).async {
                 OtherWindowsWatcher.shared.adjustAllWindows()
             }
@@ -41,14 +42,14 @@ final class ComfyBoardWindow: NSObject {
     }
     
     private func createWindow() {
-        comfyBoard?.setFrame(NSRect(x: 0, y: 0, width: comfyBoardWidth, height: comfyBoardHeight), display: true)
         comfyBoard = FixedPanel(
             contentRect: NSRect(x: 0, y: 0, width: comfyBoardWidth, height: comfyBoardHeight),
             styleMask: [.nonactivatingPanel],
             backing: .buffered,
             defer: false
         )
-        
+        comfyBoard?.setFrame(NSRect(x: 0, y: 0, width: comfyBoardWidth, height: comfyBoardHeight), display: true)
+
         comfyBoard?.collectionBehavior = [
             .canJoinAllSpaces,
             .stationary,

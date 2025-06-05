@@ -45,6 +45,11 @@
 			path = Utility;
 			sourceTree = "<group>";
 		};
+		9B4E9EC22DF16A98002F58B1 /* Managers */ = {
+			isa = PBXFileSystemSynchronizedRootGroup;
+			path = Managers;
+			sourceTree = "<group>";
+		};
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -77,6 +82,7 @@
 		9B4E9E8D2DF16458002F58B1 /* ComfyBoard */ = {
 			isa = PBXGroup;
 			children = (
+				9B4E9EC22DF16A98002F58B1 /* Managers */,
 				9B4E9EB72DF16679002F58B1 /* Utility */,
 				9B4E9EB52DF16659002F58B1 /* Widgets */,
 				9B4E9EB32DF1662A002F58B1 /* Views */,
@@ -109,6 +115,7 @@
 				9B4E9EB32DF1662A002F58B1 /* Views */,
 				9B4E9EB52DF16659002F58B1 /* Widgets */,
 				9B4E9EB72DF16679002F58B1 /* Utility */,
+				9B4E9EC22DF16A98002F58B1 /* Managers */,
 			);
 			name = ComfyBoard;
 			packageProductDependencies = (
@@ -298,7 +305,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ComfyBoard/ComfyBoard.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ComfyBoard/Config/ComfyBoard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -307,7 +314,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ComfyBoard/Info.plist;
+				INFOPLIST_FILE = ComfyBoard/Config/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
@@ -326,7 +333,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = ComfyBoard/ComfyBoard.entitlements;
+				CODE_SIGN_ENTITLEMENTS = ComfyBoard/Config/ComfyBoard.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				CURRENT_PROJECT_VERSION = 1;
@@ -335,7 +342,7 @@
 				ENABLE_HARDENED_RUNTIME = YES;
 				ENABLE_PREVIEWS = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_FILE = ComfyBoard/Info.plist;
+				INFOPLIST_FILE = ComfyBoard/Config/Info.plist;
 				INFOPLIST_KEY_NSHumanReadableCopyright = "";
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",

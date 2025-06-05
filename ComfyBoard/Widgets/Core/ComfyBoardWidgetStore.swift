@@ -8,6 +8,9 @@
 import Foundation
 
 class ComfyBoardWidgetStore: PanelManager, ObservableObject {
+    
+    @Published var widgets: [WidgetEntry] = []
+
     func hideWidget(named name: String) {
         
     }
@@ -20,7 +23,6 @@ class ComfyBoardWidgetStore: PanelManager, ObservableObject {
         
     }
     
-    @Published var widgets: [WidgetEntry] = []
     
     func addWidget(_ widget: Widget) {
         let widgetEntry = WidgetEntry(widget: widget, isVisible: true) // Default visible

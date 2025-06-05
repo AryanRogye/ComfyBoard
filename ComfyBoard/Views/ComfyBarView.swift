@@ -7,29 +7,6 @@
 
 import SwiftUI
 
-enum PanelState: String, CaseIterable {
-    case home
-    case settings
-}
-
-class ComfyBarState: ObservableObject {
-    
-    static let shared = ComfyBarState()
-    
-    init() {
-        self.createWidgetStore()
-    }
-    
-    @Published var currentPanelState: PanelState = .home
-    @Published var comfyWidgetStore: ComfyBoardWidgetStore!
-}
-
-extension ComfyBarState {
-    internal func createWidgetStore() {
-        let comfyBoardWidgetStore = ComfyBoardWidgetStore()
-    }
-}
-
 struct ComfyBarView: View {
     
     @StateObject private var comfyBarState : ComfyBarState = .shared
@@ -42,7 +19,7 @@ struct ComfyBarView: View {
                 
                 /// see QuickAccessWidget.swift file to see how it works
                 switch comfyBarState.currentPanelState {
-                case .home:         HomeComfyBarView()
+                case .home:         HomeComfyBarView(comfyBarState: comfyBarState).equatable()
                 case .settings:     EmptyView()
                 }
                 

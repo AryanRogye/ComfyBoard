@@ -8,19 +8,6 @@
 import Foundation
 
 /**
- * WidgetEntry represents a widget and its visibility state in the panel.
- * This struct is used to track both the widget itself and whether it's currently visible.
- *
- * Properties:
- * - widget: The Widget instance
- * - isVisible: Boolean flag indicating if the widget is currently visible
- */
-struct WidgetEntry {
-    var widget: Widget
-    var isVisible: Bool
-}
-
-/**
  * PanelManager defines the core functionality for managing widgets in a panel.
  * This protocol provides the basic operations needed to handle widget lifecycle.
  *
