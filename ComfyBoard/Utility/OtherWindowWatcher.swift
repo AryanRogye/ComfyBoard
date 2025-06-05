@@ -8,10 +8,13 @@
 import Cocoa
 import ApplicationServices
 
-final class OtherWindowsWatcher {
+final class OtherWindowsWatcher: NSObject {
     
     static let shared = OtherWindowsWatcher()
     private let avoidLeftInset: CGFloat = 200
+    
+    var windowIsBeingDragged = false
+    private var observers: [pid_t: AXObserver] = [:]
     
     func isFullScreenSpaceActive() -> Bool {
         for screen in NSScreen.screens {
@@ -25,6 +28,10 @@ final class OtherWindowsWatcher {
         return false
     }
     
+    func isDraggingAnyWindow() -> Bool {
+        return windowIsBeingDragged
+    }
+    
     func adjustAllWindows() {
         
         /// If In FullScreen Just Return Early
@@ -32,6 +39,12 @@ final class OtherWindowsWatcher {
             print("⚠️ Application is in Full Screen mode, skipping window adjustments.")
             return
         }
+        
+        if isDraggingAnyWindow() {
+            print("A Window is getting dragged, skipping window adjustments.")
+            return
+        }
+        
         
         // Ensure accessibility permissions are granted
         let runningApps = NSWorkspace.shared.runningApplications
@@ -107,8 +120,8 @@ final class OtherWindowsWatcher {
         AXValueGetValue(posVal, .cgPoint, &point)
         AXValueGetValue(sizeVal, .cgSize, &sizeStruct)
         
-//        print("Current position: \(point), size: \(sizeStruct)")
-//        print("App Name: \(getAppName(for: window))")
+        //        print("Current position: \(point), size: \(sizeStruct)")
+        //        print("App Name: \(getAppName(for: window))")
         
         if point.x < avoidLeftInset {
             point.x = avoidLeftInset
@@ -133,5 +146,60 @@ final class OtherWindowsWatcher {
         }
         
         return "Unknown App"
+    }
+    
+    func stopObservingWindowMoves() {
+        for (_, observer) in observers {
+            let source = AXObserverGetRunLoopSource(observer)
+            CFRunLoopRemoveSource(CFRunLoopGetMain(), source, .defaultMode)
+        }
+        observers.removeAll()
+    }
+    
+    private static let axCallback: AXObserverCallback = { observer, element, notification, context in
+        guard let context = context else { return }
+        let watcher = Unmanaged<OtherWindowsWatcher>.fromOpaque(context).takeUnretainedValue()
+        
+        if notification == kAXMovedNotification as CFString {
+            DispatchQueue.main.async {
+                watcher.windowIsBeingDragged = true
+                NSObject.cancelPreviousPerformRequests(withTarget: watcher, selector: #selector(watcher.resetDraggingFlag), object: nil)
+                watcher.perform(#selector(watcher.resetDraggingFlag), with: nil, afterDelay: 0.3)
+            }
+        }
+    }
+    
+    func startObservingWindowMoves() {
+        for app in NSWorkspace.shared.runningApplications {
+            guard
+                app.processIdentifier != 0,
+                app.bundleIdentifier != Bundle.main.bundleIdentifier,
+                !app.isHidden,
+                app.activationPolicy == .regular
+            else { continue }
+            
+            let appElement = AXUIElementCreateApplication(app.processIdentifier)
+            var value: CFTypeRef?
+            if AXUIElementCopyAttributeValue(appElement, kAXWindowsAttribute as CFString, &value) == .success,
+               let windows = value as? [AXUIElement] {
+                for window in windows {
+                    var observer: AXObserver?
+                    
+                    // 👇 context is the current instance passed to the callback
+                    let context = Unmanaged.passUnretained(self).toOpaque()
+                    let result = AXObserverCreate(app.processIdentifier, Self.axCallback, &observer)
+                    
+                    if result == .success, let observer = observer {
+                        AXObserverAddNotification(observer, window, kAXMovedNotification as CFString, context)
+                        CFRunLoopAddSource(CFRunLoopGetMain(), AXObserverGetRunLoopSource(observer), .defaultMode)
+                        observers[app.processIdentifier] = observer
+                    }
+                }
+            }
+        }
+    }
+    
+    @objc private func resetDraggingFlag() {
+        self.windowIsBeingDragged = false
     }
 }

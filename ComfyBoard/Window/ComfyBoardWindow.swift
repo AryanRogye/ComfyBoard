@@ -23,17 +23,27 @@ final class ComfyBoardWindow: NSObject {
     private let comfyBoardSide      : side    = .left
     
     func start() {
+        
         createWindow()
         
-        Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
-            guard let self = self else { return }
-            DispatchQueue.global(qos: .userInitiated).async {
-                OtherWindowsWatcher.shared.adjustAllWindows()
+        DispatchQueue.global(qos: .userInitiated).async {
+            OtherWindowsWatcher.shared.startObservingWindowMoves()
+        }
+        
+        DispatchQueue.main.asyncAfter(deadline: .now() + 0.9) {
+            Timer.scheduledTimer(withTimeInterval: 2, repeats: true) { [weak self] _ in
+                guard let self = self else { return }
+                DispatchQueue.global(qos: .userInitiated).async {
+                    OtherWindowsWatcher.shared.adjustAllWindows()
+                }
             }
         }
     }
     
     func stop() {
+        
+        OtherWindowsWatcher.shared.stopObservingWindowMoves()
+        
         /// Destroy the window
         comfyBoard?.close()
         comfyBoard?.orderOut(nil)
